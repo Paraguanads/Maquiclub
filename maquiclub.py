@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, simpledialog, messagebox, Label, Frame
+from tkinter import filedialog, messagebox, Label, Frame, Toplevel, Scale, Button
 from PIL import Image
 from rembg import remove
 import webbrowser
@@ -27,19 +27,45 @@ def save_file(file_type):
         messagebox.showinfo("Info", "No se seleccionó ningún archivo.")
         return None
 
+def ask_compression_level(callback):
+    popup = Toplevel(root)
+    popup.title("Seleccionar nivel de compresión")
+    popup.geometry("300x150")
+    label = Label(popup, text="Ajuste el nivel de compresión PNG (0-9):")
+    label.pack(pady=10)
+    slider = Scale(popup, from_=0, to=9, orient='horizontal')
+    slider.pack()
+
+    def on_confirm():
+        compression_level = slider.get()
+        popup.destroy()
+        callback(compression_level)
+    
+    def on_cancel():
+        popup.destroy()
+
+    confirm_button = Button(popup, text="Aceptar", command=on_confirm)
+    confirm_button.pack(side=tk.LEFT, padx=10, pady=10)
+    
+    cancel_button = Button(popup, text="Cancelar", command=on_cancel)
+    cancel_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
 def convert_to_png():
     input_path = open_file([("WebP files", "*.webp")])
     if input_path:
-        output_path = save_file(".png")
-        if output_path:
-            try:
-                with Image.open(input_path) as img:
-                    if img.mode != 'RGB':
-                        img = img.convert('RGB')
-                    img.save(output_path, 'PNG')
-                    messagebox.showinfo("Éxito", "Imagen convertida a PNG exitosamente.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Un error ocurrió: {e}")
+        def proceed_with_compression(compression_level):
+            output_path = save_file(".png")
+            if output_path:
+                try:
+                    with Image.open(input_path) as img:
+                        if img.mode not in ('RGBA', 'RGB'):
+                            img = img.convert('RGBA')
+                        img.save(output_path, 'PNG', compress_level=compression_level)
+                        messagebox.showinfo("Éxito", f"Imagen convertida a PNG exitosamente con nivel de compresión {compression_level}.")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Un error ocurrió: {e}")
+
+        ask_compression_level(proceed_with_compression)
 
 def remove_background():
     input_path = open_file([("Image files", "*.png;*.jpg;*.jpeg;*.webp")])
@@ -59,7 +85,7 @@ def open_link(url):
 
 root = tk.Tk()
 root.title("Maquiclub v1")
-root.geometry("300x200")  
+root.geometry("400x200")  
 
 frame = Frame(root)
 frame.pack(pady=20)
