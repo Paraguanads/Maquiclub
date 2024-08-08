@@ -10,5 +10,7 @@ Puedes descargarte este repositorio en tu computadora, abrir con tu gestor de c�
 
 Una vez instalados los requerimientos corre el script maquiclub.py y utiliza las funciones disponibles.
 
+Si quieres usar el programa en Windows de una vez sin tener que instalar nada, descárgate el ejecutable desde [este Google Drive](https://drive.google.com/file/d/1GuY4CWdDQMjjhw6JXV9T9qoauHrWAzoR/view?usp=sharing).
+
 ## He encontrado errores o quiero añadir funcionalidades
 Siéntete libre de forkear este script en tu repositorio, hacer los cambios que consideres y, si son para el bien común, los aceptaremos dentro del repo principal.
